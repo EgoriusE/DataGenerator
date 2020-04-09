@@ -3,6 +3,7 @@ from GenUsers import GenUsers
 from GenGroups import GenGroups
 from Utils import cursor, close_connection
 from ArtistGenerator import ArtistGenerator
+from AlbumGenerator import AlbumGenerator
 
 
 @click.group()
@@ -51,6 +52,21 @@ def add_artists(n):
 
 
 @click.command()
+@click.option('-n', default=10_000, help='The number of albums')
+def add_albums(n):
+    gen_albums = AlbumGenerator()
+    data = gen_albums.get_primary_key_data(n)
+    for d in data:
+        params = gen_albums.get_params()
+        print('id: ', d, params, sep=': ')
+        cursor.execute(
+            'insert into album (id, name, year, duration, quantity, icon_path) values (%s, %s, %s, %s, %s, %s);commit;',
+            (d, params.get('name'), params.get('year'), params.get('duration'), params.get('quantity'),
+             params.get('icon_path')))
+    print(n, "Albums added", sep=' ')
+
+
+@click.command()
 @click.option('-table_name', default="group", help='Delete all records in table')
 def del_records(table_name):
     cursor.execute('delete from %s;', (table_name,))
@@ -66,6 +82,7 @@ cli.add_command(del_records)
 cli.add_command(add_users)
 cli.add_command(add_groups)
 cli.add_command(add_artists)
+cli.add_command(add_albums)
 cli.add_command(del_records)
 cli.add_command(exitt)
 
