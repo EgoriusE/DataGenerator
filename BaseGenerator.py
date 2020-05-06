@@ -1,8 +1,6 @@
+from mimesis import Address
 from mimesis import Generic
 from mimesis import Person
-from mimesis import Generic
-from mimesis import Address
-from mimesis import Path
 from mimesis import Text
 
 

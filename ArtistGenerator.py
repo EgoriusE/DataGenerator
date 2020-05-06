@@ -1,6 +1,6 @@
 from BaseGenerator import BaseGenerator
 import random
-from Utils import cursor
+from Utils import open_connection, close_connection
 
 
 class ArtistGenerator(BaseGenerator):
@@ -12,8 +12,10 @@ class ArtistGenerator(BaseGenerator):
             'desc': self.text.sentence()
         }
         if bool(random.getrandbits(1)):
+            cursor, conn = open_connection()
             cursor.execute('SELECT name FROM "group" ORDER BY RANDOM() LIMIT 1;')
             group_name = cursor.fetchone()
+            close_connection(cursor, conn)
             artist.update({'group': group_name[0]})
         else:
             artist.update({'group': None})
@@ -23,7 +25,7 @@ class ArtistGenerator(BaseGenerator):
     def get_primary_key_data(self, num):
         self.clear_data()
         while num != 0:
-            name = self.person.name()
+            name = self.generic.numbers.float_number()
             if not (name in self.data):
                 self.data.add(name)
                 num = num - 1
